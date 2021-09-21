@@ -1,5 +1,5 @@
 Gelas dari sudut pandang depan atas
-<img src="img\g_depan.jpg" width="></img><br>
+<img src="img\g_depan.jpg" width=""></img><br>
 
 Gelas dari sudut pandang belakang atas
 <img src="img\g_belakang.jpg" width=""></img><br>
