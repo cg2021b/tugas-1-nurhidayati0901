@@ -6,139 +6,272 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Objects</title>
     <script src="./js/three.min.js"></script>
+    <script src="./js/OrbitControls.js"></script>
+    <style>
+        * {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+            text-align: left;
+        }
+
+        h2 {
+            color: mediumslateblue;
+            text-align: center;
+        }
+
+        .container {
+            text-align: left;
+        }
+
+        #light_1 {
+            border-radius: 10px;
+            border: 2px solid mediumslateblue;
+        }
+
+        #light_2 {
+            border-radius: 10px;
+            border: 2px solid mediumslateblue;
+        }
+
+        select {
+            color: mediumslateblue;
+            width: auto;
+            height: auto;
+            font-size: large;
+        }
+
+        .custom-select {
+            display: flexbox;
+        }
+    </style>
 </head>
 <body>
-    <select id="light">
-        <option value="0">Ambient Light</option>
-        <option value="1">Hemisphere Light</option>
-        <option value="2">Directional Light</option>
-        <option value="3">Point Light</option>
-        <option value="4">Spot Light</option>
-    </select>
+    <div>
+        <h2>Nur Hidayati (05111940000028)</h2>
+    </div>
+    <div>
+        <select id="light_1">
+            <option value="0">Ambient Light</option>
+            <option value="1">Hemisphere Light</option>
+            <option value="2">Directional Light</option>
+            <option value="3">Point Light</option>
+            <option value="4">Spotlight</option>
+        </select>
+    </div>
+    <br>
+    <div>
+        <select id="light_2">
+            <option value="0">Directional Light</option>
+            <option value="1">Hemisphere Light</option>
+            <option value="2">Ambient Light</option>
+            <option value="3">Point Light</option>
+            <option value="4">Spotlight</option>
+        </select>
+    </div>
+    <br>
 </body>
 </html>
 
-<script>    
-    let scene, camera, renderer;
+<script>  
+    let scene, camera, light, renderer;
     // 3D objects
     let cube, cone, cylinder, dode, torus, sphere, octahedron, tetrahedron, torusKnot;
+    const fov = 45;
+    // default canvas
+    const aspect = 2;  
+    const near = 0.1;
+    const far = 100;
+    var move_1 = 0.01, move_2 = 0.01;
     
     // cube
     let createCube = function() {
-        let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-        let cubeMaterial = new THREE.MeshBasicMaterial({color: 0x619eff, wireframe: true, wireframeLineWidth: 2});
+        let cubeGeometry = new THREE.BoxGeometry(2, 2, 2);
+        const cubeMaterial = new THREE.MeshBasicMaterial({color: 0x619eff, 
+            wireframe: true});
         cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.x = 8;
+        cube.position.y = -1;
+        cube.position.z = 2;
         scene.add(cube);
     }
 
     // cone
     let createCone = function() {
-        let coneGeometry = new THREE.ConeGeometry(0.5, 1, 16);
-        let coneMaterial = new THREE.MeshDepthMaterial({wireframe: true, wireframeLineWidth: 2});
+        let coneGeometry = new THREE.ConeGeometry(1.5, 4, 7);
+        const coneMaterial = new THREE.MeshNormalMaterial({color: 0x619eff, 
+            wireframe: true});
         cone = new THREE.Mesh(coneGeometry, coneMaterial);
         scene.add(cone);
-        cone.position.y = -2;
+        cone.position.y = 9;
+        cone.rotation.y = Math.PI/2;
+        cone.position.z = 3;
     }
 
     // cylinder
     let createCylinder = function() {
-        let cylinderGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 16);
-        let cylinderMaterial = new THREE.MeshPhongMaterial({color: 0x619eff, wireframe: true, wireframeLineWidth: 2, shininess: 150});
+        let cylinderGeometry = new THREE.CylinderGeometry(1.5, 1.5, 3, 16);
+        let cylinderMaterial = new THREE.MeshPhongMaterial({color: 0x619eff, 
+            wireframe: true, 
+            shininess: 150});
         cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
         scene.add(cylinder);
+        cylinder.position.x = 3;
         cylinder.position.y = 2;
+        cylinder.position.z = 8;
     }
 
     // dode
     let createDode = function() {
-        let dodeGeometry = new THREE.DodecahedronGeometry(0.5, 1);
-        let dodeMaterial = new THREE.MeshPhongMaterial({color: 0x880044, shininess: 150});
+        let dodeGeometry = new THREE.DodecahedronGeometry(2, 2);
+        const dodeMaterial = new THREE.MeshPhongMaterial({color: 0x880044, 
+            shininess: 150,
+            flatShading: true,
+            specular: 0xc6e2ff});
         dode = new THREE.Mesh(dodeGeometry, dodeMaterial);
         scene.add(dode);
-        dode.position.set(-2, 2, 0);
+        dode.position.x = -13;
+        dode.position.y = 5;
+        dode.rotation.y = Math.PI/2;
+        dode.position.z = 3;
     }
 
     // torus
     let createTorus = function() {
-        let torusGeometry = new THREE.TorusGeometry(0.5, 0.15, 8, 16);
-        let torusMaterial = new THREE.MeshLambertMaterial({color: 0x448800});
+        let torusGeometry = new THREE.TorusGeometry(1.5, 0.5, 8, 16);
+        const torusMaterial = new THREE.MeshStandardMaterial({color: 0x76ee00, 
+            metalness: 0.6,
+            clearcoat: 0.5});
         torus = new THREE.Mesh(torusGeometry, torusMaterial);
         scene.add(torus);
-        torus.position.set(2, -2, 0);
+        torus.position.x = 0;
+        torus.position.y = -2;
+        torus.position.z = 5;
     }
 
     // sphere
     let createSphere = function() {
-        let sphereGeometry = new THREE.SphereGeometry(0.5, 8, 8);
-        let sphereMaterial = new THREE.MeshPhongMaterial({color: 0x49ef4, shininess: 30});
+        let sphereGeometry = new THREE.SphereGeometry(2, 10, 10);
+        const sphereMaterial = new THREE.MeshPhongMaterial({color: 0x49ef4, 
+            shininess: 150,
+            specular: 0xc6e2ff});
         sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
         scene.add(sphere);
-        sphere.position.set(2, 0, 0);
+        sphere.position.x = 20;
+        sphere.position.y = 0;
+        sphere.position.z = 5;
     }
 
     // octahedron
     let createOctahedron = function() {
-        let octahedronGeometry = new THREE.OctahedronGeometry(0.5);
-        let octahedronMaterial = new THREE.MeshStandardMaterial({color: 0xFFaa00, metalness: 1, roughness: 0.5});
+        let octahedronGeometry = new THREE.OctahedronGeometry(2);
+        const octahedronMaterial = new THREE.MeshStandardMaterial({color: 0x9400d3, 
+            metalness: 0.5, 
+            clearcoat: 0.5});
         octahedron = new THREE.Mesh(octahedronGeometry, octahedronMaterial);
         scene.add(octahedron);
-        octahedron.position.set(2, 2, 0);
+        octahedron.position.x = 20;
+        octahedron.position.y = 5;
+        octahedron.position.z = 3;
     }
 
     // tetrahedron
     let createTetrahedron = function() {
-        let tetrahedronGeometry = new THREE.TetrahedronGeometry(1);
-        let tetrahedronMaterial = new THREE.MeshPhysicalMaterial({color: 0x800080});
+        const rad = 1.5;
+        const det = 2;
+        let tetrahedronGeometry = new THREE.TetrahedronGeometry(rad, det);
+        const tetrahedronMaterial = new THREE.MeshPhysicalMaterial({color: 0xcf8bfc, 
+            flatShading: true,
+            clearcoat: 0.3,
+            metalness: 0.2,
+            reflectivity: 1,
+            clearcoatRoughness: 0.3});
         tetrahedron = new THREE.Mesh(tetrahedronGeometry, tetrahedronMaterial);
         scene.add(tetrahedron);
-        tetrahedron.position.set(-2, 0, 0);
+        tetrahedron.position.x = 10;
+        tetrahedron.position.y = -8;
+        tetrahedron.rotation.y = Math.PI / 2;
+        tetrahedron.position.z = 8;
     }
 
     // torusKnot
     let createTorusKnot = function() {
-        let torusKnotGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 64, 12, 2);
-        let torusKnotMaterial = new THREE.MeshPhongMaterial({color: 0xaa4400, shininess: 150});
+        let torusKnotGeometry = new THREE.TorusKnotGeometry(1.5, 0.6, 100, 8, 2);
+        const torusKnotMaterial = new THREE.MeshPhongMaterial({color: 0xaa4400, 
+            shininess: 150,
+            specular: 0xff9900});
         torusKnot = new THREE.Mesh(torusKnotGeometry, torusKnotMaterial);
         scene.add(torusKnot);
-        torusKnot.position.set(-2, -2, 0);
+        torusKnot.position.x = -10;
+        torusKnot.position.y = -3;
+        torusKnot.position.z = 5;
     }
 
-    let lighting = function() {
-        const color = 0xffffff;
-        const color1 = 0x0095DD;
-
+    let lighting1 = function() {
         // AmbientLight -> menerangi semua obyek dalam scene secara merata
-        const aLight = new THREE.AmbientLight(color, 1);
-        aLight.position.set(0, -4, 0);
+        const aLight = new THREE.AmbientLight(0xffffff, 0.7);
+        aLight.position.set(20, 20, 20);
 
         // Hemisphere Light -> ada fading antara warna langit dan ground
-        const hLight = new THREE.HemisphereLight(color, color1, 1);
-        hLight.position.set(-10, 10, 15);
+        const hLight = new THREE.HemisphereLight(0xffffff, 0x0095DD, 1);
+        hLight.position.set(10, 20, 30);
 
         // Directional Light -> cahaya dipancarkan ke arah tertentu (seperti matahari)
-        const dLight = new THREE.DirectionalLight(color, 1);
-        dLight.position.set(0, 0, 2).normalize();
+        const dLight = new THREE.DirectionalLight(0xffffff, 1);
+        dLight.position.set(-10, 25, 25).normalize();
 
         // Point Light -> cahaya dipancarkan dari jarak tertentu ke semua arah (seperti lampu)
-        const pLight = new THREE.PointLight(color, 1, 100);
-        pLight.position.set(-10, 15, 50);
+        const p1Light = new THREE.PointLight(0xffffff, 1, 100);
+        p1Light.position.set(10, 10, 10);
 
         // Spot Light -> memancarkan sinar kesatu arah sepanjang kerucut (semakin jauh semakin lebar area cahaya)
-        const sLight = new THREE.SpotLight(color, 1, 75);
-        sLight.position.set(-10, 15, 50);
+        const sLight = new THREE.SpotLight(0xffffff, 1, 75);
+        sLight.position.set(30, 30, 30);
 
         // array of lights
-        const lights = [aLight, hLight, dLight, pLight, sLight];
+        const lights_1 = [aLight, hLight, dLight, p1Light, sLight];
 
-        lights.forEach((obj) => scene.add(obj));
-        lights.forEach((light) => {light.visible = false});
-        lights[0].visible = true;
+        lights_1.forEach((obj) => scene.add(obj));
+        lights_1.forEach((light_1) => {light_1.visible = false});
+        lights_1[0].visible = true;
 
-        const selectedLight = document.getElementById('light');
-        selectedLight.addEventListener('change', (e) => {
+        const selectedLight_1 = document.getElementById('light_1');
+        selectedLight_1.addEventListener('change', (e) => {
             const selected = e.target.value;
-            lights.forEach((light) => {light.visible = false});
-            lights[selected].visible = true;
+            lights_1.forEach((light_1) => {light_1.visible = false});
+            lights_1[selected].visible = true;
+        });
+    };
+
+    let lighting2 = function() {
+        const dLight = new THREE.DirectionalLight(0xffffff, 1);
+        dLight.position.set(-10, 25, 25).normalize();
+
+        const hLight = new THREE.HemisphereLight(0xffffff, 0x0095DD, 1);
+        hLight.position.set(10, 20, 30);
+
+        const aLight = new THREE.AmbientLight(0xffffff, 0.7);
+        aLight.position.set(20, 20, 20);
+
+        const pLight = new THREE.PointLight(0xffffff, 1, 100);
+        pLight.position.set(10, 10, 10);
+
+        // Spot Light -> memancarkan sinar kesatu arah sepanjang kerucut (semakin jauh semakin lebar area cahaya)
+        const sLight = new THREE.SpotLight(0xffffff, 1, 75);
+        sLight.position.set(30, 30, 30);
+
+        // array of lights
+        const lights_2 = [dLight, hLight, aLight, pLight, sLight];
+
+        lights_2.forEach((obj) => scene.add(obj));
+        lights_2.forEach((light_2) => {light_2.visible = false});
+        lights_2[0].visible = true;
+
+        const selectedLight_2 = document.getElementById('light_2');
+        selectedLight_2.addEventListener('change', (x) => {
+            const selected = x.target.value;
+            lights_2.forEach((lights_2) => {light_2.visible = false});
+            lights_2[selected].visible = true;
         });
     };
 
@@ -147,13 +280,21 @@
     let init = function() {
         // 1. create the scene
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x565656);
+        scene.background = new THREE.Color(0x000000);
+        // set scene
+        scene.rotateX(-Math.PI * 0.25);
+        scene.rotateY(Math.PI * 0.04);
+        scene.rotateZ(Math.PI * 0.7);
         
         // 2. create an locate the camera       
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 
+        camera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 
                     1, 1000);
-        camera.position.z = 5;
-        lighting();
+        camera.position.x = 20;
+        camera.position.y = -70;
+        camera.position.z = 100;
+
+        lighting1();
+        lighting2();
         
         // 3. create an locate the object on the scene           
         createCube();
@@ -167,32 +308,54 @@
         createTorusKnot();
         
         // 4. create the renderer     
-        renderer = new THREE.WebGLRenderer({antialias: true});   
+        renderer = new THREE.WebGLRenderer();   
         renderer.setSize(window.innerWidth, window.innerHeight);
         
         document.body.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        renderer.render(scene, camera, controls);
     };
     
     // main animation loop - calls 50-60 in a second.
     let mainLoop = function() {
         cube.rotation.x += 0.01;
         cube.rotation.y += 0.01;
-        cone.rotation.x += 0.01;
-        cone.rotation.y += 0.01;
-        cylinder.rotation.x += 0.01;
-        cylinder.rotation.y += 0.01;
-        dode.rotation.x += 0.01;
-        dode.rotation.y += 0.01;
-        torus.rotation.x += 0.01;
-        torus.rotation.y += 0.01;
-        sphere.rotation.x += 0.01;
-        sphere.rotation.y += 0.01;
-        octahedron.rotation.x += 0.01;
-        octahedron.rotation.y += 0.01;
-        tetrahedron.rotation.x += 0.01;
-        tetrahedron.rotation.y += 0.01;
-        torusKnot.rotation.x += 0.01;
-        torusKnot.rotation.y += 0.01;
+
+        cone.rotation.x += 0.05;
+        cone.rotation.y += 0.05;
+        cone.rotation.z += 0.05;
+
+        cylinder.position.z += -move_1;
+        if(cylinder.position.z > 0.01) move_1 = -0.05;
+        if(cylinder.position.z > 5) {
+            move_1 = 0;
+            cylinder.rotation.x += 0.01;
+            cylinder.rotation.y += -0.02;
+            cylinder.rotation.z += -0.03;
+        }
+
+        dode.rotation.x += 0.02;
+        dode.rotation.y += 0.02;
+        dode.rotation.z += 0.02;
+
+        torus.rotation.y += 0.05;
+
+        sphere.rotation.x += 0.03;
+        sphere.rotation.y += 0.03;
+
+        octahedron.rotation.z += -move_2;
+        if(octahedron.position.z > 2) move_2 = -0.05;
+        if(octahedron.position.z > 4) {
+            move_2 = 0;
+            octahedron.rotation.z += 0.06;
+        };
+
+        tetrahedron.rotation.y += 0.04;
+
+        torusKnot.rotation.x += 0.03;
+        torusKnot.rotation.y += 0.03;
+
         renderer.render(scene, camera);
         requestAnimationFrame(mainLoop);
     };
